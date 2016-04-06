@@ -1,0 +1,24 @@
+{
+  "name": "@idac/csvtools",
+  "version": "0.0.0",
+  "description": "Tools for working with and analysing CSV files.",
+  "main": "project.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cli-table2": "^0.2.0",
+    "colors": "^1.1.2",
+    "fast-csv": "^1.1.0",
+    "immutable": "^3.7.6",
+    "lodash": "^4.6.1",
+    "meow": "^3.7.0",
+    "rx": "^4.1.0"
+  },
+  "bin": {
+    "csvproject": "project.js",
+    "csvreport": "report.js"
+  }
+}
