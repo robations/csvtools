@@ -17,8 +17,12 @@ const cli = meow(`
       $ csvreport <file.csv> --cols "Column Name" --cols "Another"
     `,
     {
+        boolean: [
+            "no-headers"
+        ],
         alias: {
-            c: "cols"
+            c: "cols",
+            n: "no-headers"
         }
     }
 );
@@ -28,6 +32,8 @@ const cols = typeof cli.flags.cols === "undefined"
     ? []
     : (typeof cli.flags.cols === "object" ? cli.flags.cols : [cli.flags.cols])
 ;
+
+const headersIn = cli.flags.noHeaders === false;
 
 var stream = fs.createReadStream(cli.input[0]);
 
@@ -105,7 +111,7 @@ function _if(expr, t, f) {
     ;
 }
 
-const csv$ = createCsvObservable(stream, {headers: true});
+const csv$ = createCsvObservable(stream, {headers: headersIn});
 csv$
     .map((row) => cols.length ? _.pick(row, cols) : row)
     .reduce(

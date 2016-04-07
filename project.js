@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+"use strict";
 
 const meow = require("meow");
 const csv = require("fast-csv");
@@ -14,10 +15,12 @@ const cli = meow(`
     `,
     {
         boolean: [
+            "no-headers",
             "headers-out"
         ],
         alias: {
             c: "cols",
+            n: "no-headers",
             h: "headers-out"
         }
     }
@@ -25,15 +28,17 @@ const cli = meow(`
 
 // always coerce into an array:
 const cols = typeof cli.flags.cols === "undefined"
-        ? []
-        : (typeof cli.flags.cols === "object" ? cli.flags.cols : [cli.flags.cols])
-    ;
+    ? []
+    : (typeof cli.flags.cols === "object" ? cli.flags.cols : [cli.flags.cols])
+;
+
+const headersIn = cli.flags.noHeaders === false;
 
 var stream = fs.createReadStream(cli.input[0]);
-var writeStream = csv.createWriteStream({headers: true});
+var writeStream = csv.createWriteStream({headers: headersIn && cli.flags.headersOut});
 writeStream.pipe(process.stdout);
 
-const csv$ = createCsvObservable(stream, {headers: true});
+const csv$ = createCsvObservable(stream, {headers: headersIn});
 csv$
     .map((x) => {
         return cols.length === 0
