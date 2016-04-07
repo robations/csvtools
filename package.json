@@ -20,5 +20,8 @@
   "bin": {
     "csvproject": "project.js",
     "csvreport": "report.js"
-  }
+  },
+  "files": [
+      "*.js"
+  ]
 }
