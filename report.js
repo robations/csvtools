@@ -13,8 +13,15 @@ const immutable = require("immutable");
 const createCsvObservable = require("./createCsvObservable");
 
 const cli = meow(`
-    Usage
-      $ csvreport <file.csv> --cols "Column Name" --cols "Another"
+    USAGE
+      $ csvreport [file.csv] --cols "Column Name" --cols "Another"
+
+    OPTIONS
+      --cols col, -c col
+            Select a column by name (if using a header row) or number.
+
+      --no-headers, -n
+            First row of input is not a header row, columns must be indexed by number.
     `,
     {
         boolean: [
@@ -35,7 +42,10 @@ const cols = typeof cli.flags.cols === "undefined"
 
 const headersIn = cli.flags.noHeaders === false;
 
-var stream = fs.createReadStream(cli.input[0]);
+var stream = cli.input.length > 0
+    ? fs.createReadStream(cli.input[0])
+    : process.stdin
+;
 
 function stringColReport(agg, col) {
     if (agg === null) {
@@ -185,8 +195,8 @@ csv$
     })
 ;
 
-process.stdout.on('error', function(err) {
-    if (err.code == "EPIPE") {
+process.stdout.on("error", function(err) {
+    if (err.code === "EPIPE") {
         process.exit(0);
     }
 });

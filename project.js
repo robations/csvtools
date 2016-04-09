@@ -10,8 +10,18 @@ const rx = require("rx");
 const createCsvObservable = require("./createCsvObservable");
 
 const cli = meow(`
-    Usage
-      $ csvproject <file.csv> --cols "Column Name" --cols "Another" --headers-out
+    USAGE
+      $ csvproject [file.csv] --cols "Column Name" --cols "Another" --headers-out
+
+    OPTIONS
+      --cols col, -c col
+            Select a column by name (if using a header row) or number.
+
+      --headers-out, -h
+            Output a header row.
+
+      --no-headers, -n
+            First row of input is not a header row, columns must be indexed by number.
     `,
     {
         boolean: [
@@ -34,7 +44,10 @@ const cols = typeof cli.flags.cols === "undefined"
 
 const headersIn = cli.flags.noHeaders === false;
 
-var stream = fs.createReadStream(cli.input[0]);
+var stream = cli.input.length > 0
+    ? fs.createReadStream(cli.input[0])
+    : process.stdin
+;
 var writeStream = csv.createWriteStream({headers: headersIn && cli.flags.headersOut});
 writeStream.pipe(process.stdout);
 
@@ -57,7 +70,7 @@ csv$
 ;
 
 process.stdout.on("error", function(err) {
-    if (err.code == "EPIPE") {
+    if (err.code === "EPIPE") {
         process.exit(0);
     }
 });
