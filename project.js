@@ -8,20 +8,28 @@ const _ = require("lodash");
 const rx = require("rx");
 
 const createCsvObservable = require("./createCsvObservable");
+const optionsParser = require("./options");
+const columnSelectors = require("./columnSelectors");
 
 const cli = meow(`
     USAGE
       $ csvproject [file.csv] --cols "Column Name" --cols "Another" --headers-out
 
     OPTIONS
-      --cols col, -c col
-            Select a column by name (if using a header row) or number.
+      --col col, -c col
+            Select a column by name (if using a header row) or number. Cannot be used with --exclude.
+
+      --exclude col, -e col
+            Exclude a column by name (if using a header row) or number. Cannot be used with --col.
 
       --headers-out, -h
             Output a header row.
 
       --no-headers, -n
             First row of input is not a header row, columns must be indexed by number.
+
+      --delimiter x, -d x
+            CSV delimiter. Default is ",". Must be one character in length only.
     `,
     {
         boolean: [
@@ -29,36 +37,30 @@ const cli = meow(`
             "headers-out"
         ],
         alias: {
-            c: "cols",
+            c: "col",
             n: "no-headers",
-            h: "headers-out"
+            h: "headers-out",
+            e: "exclude"
         }
     }
 );
 
-// always coerce into an array:
-const cols = typeof cli.flags.cols === "undefined"
-    ? []
-    : (typeof cli.flags.cols === "object" ? cli.flags.cols : [cli.flags.cols])
+
+const options = optionsParser(cli);
+
+const columnSelector = options.cols.length > 0
+    ? columnSelectors.include(options.cols)
+    : columnSelectors.exclude(options.excludes)
 ;
 
-const headersIn = cli.flags.noHeaders === false;
+var stream = options.inputStream;
 
-var stream = cli.input.length > 0
-    ? fs.createReadStream(cli.input[0])
-    : process.stdin
-;
-var writeStream = csv.createWriteStream({headers: headersIn && cli.flags.headersOut});
+var writeStream = csv.createWriteStream({headers: options.headersIn && options.headersOut});
 writeStream.pipe(process.stdout);
 
-const csv$ = createCsvObservable(stream, {headers: headersIn});
+const csv$ = createCsvObservable(stream, {headers: options.headersIn, delimiter: options.delimiter});
 csv$
-    .map((x) => {
-        return cols.length === 0
-            ? x
-            : _.pick(x, cols)
-        ;
-    })
+    .map(columnSelector)
     .subscribe(
         x => writeStream.write(x),
         null,

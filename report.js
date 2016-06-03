@@ -11,10 +11,12 @@ const colors = require("colors/safe");
 const immutable = require("immutable");
 
 const createCsvObservable = require("./createCsvObservable");
+const optionsParser = require("./options");
+const columnSelectors = require("./columnSelectors");
 
 const cli = meow(`
     USAGE
-      $ csvreport [file.csv] --cols "Column Name" --cols "Another"
+      $ csvreport [file.csv] --col "Column Name" --col "Another"
 
     OPTIONS
       --cols col, -c col
@@ -22,30 +24,29 @@ const cli = meow(`
 
       --no-headers, -n
             First row of input is not a header row, columns must be indexed by number.
+ 
+      --delimiter x, -d x
+            CSV delimiter. Default is ",". Must be one character in length only.
     `,
     {
         boolean: [
             "no-headers"
         ],
         alias: {
-            c: "cols",
+            c: "col",
             n: "no-headers"
         }
     }
 );
 
-// always coerce into an array:
-const cols = typeof cli.flags.cols === "undefined"
-    ? []
-    : (typeof cli.flags.cols === "object" ? cli.flags.cols : [cli.flags.cols])
+const options = optionsParser(cli);
+
+const columnSelector = options.cols.length > 0
+    ? columnSelectors.include(options.cols)
+    : columnSelectors.exclude(options.excludes)
 ;
 
-const headersIn = cli.flags.noHeaders === false;
-
-var stream = cli.input.length > 0
-    ? fs.createReadStream(cli.input[0])
-    : process.stdin
-;
+var stream = options.inputStream;
 
 function stringColReport(agg, col) {
     if (agg === null) {
@@ -121,9 +122,9 @@ function _if(expr, t, f) {
     ;
 }
 
-const csv$ = createCsvObservable(stream, {headers: headersIn});
+const csv$ = createCsvObservable(stream, {headers: headersIn, delimiter: delimiter});
 csv$
-    .map((row) => cols.length ? _.pick(row, cols) : row)
+    .map(columnSelector)
     .reduce(
         (agg, row) => {
             return _.mapValues(row, (v, k) => colReport(agg[k], row[k]));
