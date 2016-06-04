@@ -8,7 +8,8 @@
   },
   "main": "project.js",
   "scripts": {
-    "test": "node test.js"
+    "test": "node test.js",
+    "preversion": "! grep -q '\\[Unreleased\\]' CHANGELOG.md"
   },
   "author": "",
   "license": "ISC",
