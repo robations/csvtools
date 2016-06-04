@@ -1,6 +1,6 @@
 {
   "name": "@idac/csvtools",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Tools for working with and analysing CSV files.",
   "repository": {
     "type": "git",
