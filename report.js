@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 "use strict";
 
-const meow = require("meow");
 const csv = require("fast-csv");
 const fs = require("fs");
 const _ = require("lodash");
@@ -11,35 +10,20 @@ const colors = require("colors/safe");
 const immutable = require("immutable");
 
 const createCsvObservable = require("./createCsvObservable");
-const optionsParser = require("./options");
+const optionsParser = require("./optionsParser");
 const columnSelectors = require("./columnSelectors");
 
-const cli = meow(`
-    USAGE
-      $ csvreport [file.csv] --col "Column Name" --col "Another"
+const options = optionsParser(process.argv);
 
-    OPTIONS
-      --cols col, -c col
-            Select a column by name (if using a header row) or number.
-
-      --no-headers, -n
-            First row of input is not a header row, columns must be indexed by number.
- 
-      --delimiter x, -d x
-            CSV delimiter. Default is ",". Must be one character in length only.
-    `,
-    {
-        boolean: [
-            "no-headers"
-        ],
-        alias: {
-            c: "col",
-            n: "no-headers"
-        }
-    }
-);
-
-const options = optionsParser(cli);
+if (options.version) {
+    console.log(require("./package.json").version);
+    process.exit(0);
+}
+if (options.help) {
+    console.log(`Usage: $ csvreport [file.csv] --col "Column Name" --col "Another"`);
+    console.log(options.helpText);
+    process.exit(0);
+}
 
 const columnSelector = options.cols.length > 0
     ? columnSelectors.include(options.cols)
@@ -122,7 +106,7 @@ function _if(expr, t, f) {
     ;
 }
 
-const csv$ = createCsvObservable(stream, {headers: headersIn, delimiter: delimiter});
+const csv$ = createCsvObservable(stream, {headers: options.headersIn, delimiter: options.delimiter});
 csv$
     .map(columnSelector)
     .reduce(
@@ -132,7 +116,7 @@ csv$
         {}
     )
     .map((x) => {
-        return _.mapValues(x, (v, k) => {
+        return _.mapValues(x, v => {
             var table = new Table({
                 colWidths: [null, 60],
                 wordWrap: true

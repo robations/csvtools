@@ -31,7 +31,13 @@ citroen
 
 $ csvproject test.csv -c make -c derivative
 ford,2.0L
-ford, 3.0L
+ford,3.0L
+citroen,2.3L
+
+$ # exclude columns instead of including:
+$ csvproject test.csv -e model
+ford,2.0L
+ford,3.0L
 citroen,2.3L
 
 $ csvproject test.csv -c model --headers-out
@@ -51,6 +57,12 @@ $ csvproject -c make < test.csv
 ford
 ford
 citroen
+
+$ # use a tab delimiter:
+$ csvproject -d$'\t' < test.tsv
+ford,capri,2.0L
+ford,capri,3.0L
+citroen,ds,2.3L
 ```
 
 
@@ -86,5 +98,7 @@ Column: make
 - [x] Write usage docs.
 - [x] Support files without a header row.
 - [x] Support input from stdin.
-- [ ] Write some tests.
-- [ ] Add flag to exclude columns instead of including.
+- [x] Write some tests.
+- [x] Add flag to exclude columns instead of including.
+- [ ] Improve test coverage.
+- [ ] Support passing options from a config file.

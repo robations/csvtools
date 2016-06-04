@@ -2,19 +2,23 @@
   "name": "@idac/csvtools",
   "version": "0.1.0",
   "description": "Tools for working with and analysing CSV files.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/robations/csvtools.git"
+  },
   "main": "project.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cli-table2": "^0.2.0",
     "colors": "^1.1.2",
+    "dashdash": "^1.14.0",
     "fast-csv": "^1.1.0",
     "immutable": "^3.7.6",
     "lodash": "^4.6.1",
-    "meow": "^3.7.0",
     "rx": "^4.1.0"
   },
   "bin": {
@@ -23,5 +27,8 @@
   },
   "files": [
     "*.js"
-  ]
+  ],
+  "devDependencies": {
+    "jasmine": "^2.4.1"
+  }
 }

@@ -1,52 +1,27 @@
 #!/usr/bin/env node
 "use strict";
 
-const meow = require("meow");
 const csv = require("fast-csv");
 const fs = require("fs");
 const _ = require("lodash");
 const rx = require("rx");
 
 const createCsvObservable = require("./createCsvObservable");
-const optionsParser = require("./options");
+const optionsParser = require("./optionsParser");
 const columnSelectors = require("./columnSelectors");
 
-const cli = meow(`
-    USAGE
-      $ csvproject [file.csv] --cols "Column Name" --cols "Another" --headers-out
+const options = optionsParser(process.argv);
 
-    OPTIONS
-      --col col, -c col
-            Select a column by name (if using a header row) or number. Cannot be used with --exclude.
+if (options.version) {
+    console.log(require("./package.json").version);
+    process.exit(0);
+}
+if (options.help) {
+    console.log(`Usage: $ csvproject [file.csv] --cols "Column Name" --cols "Another" --headers-out`);
+    console.log(options.helpText);
+    process.exit(0);
+}
 
-      --exclude col, -e col
-            Exclude a column by name (if using a header row) or number. Cannot be used with --col.
-
-      --headers-out, -h
-            Output a header row.
-
-      --no-headers, -n
-            First row of input is not a header row, columns must be indexed by number.
-
-      --delimiter x, -d x
-            CSV delimiter. Default is ",". Must be one character in length only.
-    `,
-    {
-        boolean: [
-            "no-headers",
-            "headers-out"
-        ],
-        alias: {
-            c: "col",
-            n: "no-headers",
-            h: "headers-out",
-            e: "exclude"
-        }
-    }
-);
-
-
-const options = optionsParser(cli);
 
 const columnSelector = options.cols.length > 0
     ? columnSelectors.include(options.cols)
