@@ -1,8 +1,13 @@
 {
   "name": "@idac/csvtools",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Tools for working with and analysing CSV files.",
-  "keywords": ["csv", "tsv", "dsv", "cli"],
+  "keywords": [
+    "csv",
+    "tsv",
+    "dsv",
+    "cli"
+  ],
   "preferGlobal": true,
   "repository": {
     "type": "git",
