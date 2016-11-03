@@ -3,9 +3,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.1.2]
 ### Added
 - `preversion` hook to check for 'Unreleased' in this changelog.
+- Options `-t` and `--tabdelim` override `--delimiter` for using a tab delimiter.
+
+### Fixed
+- Empty lines no longer drop report information.
 
 
 ## [0.1.1]
