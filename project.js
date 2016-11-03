@@ -17,7 +17,7 @@ if (options.version) {
     process.exit(0);
 }
 if (options.help) {
-    console.log(`Usage: $ csvproject [file.csv] --cols "Column Name" --cols "Another" --headers-out`);
+    console.log(`Usage: $ csvproject [file.csv] --col "Column Name" --col "Another" --headers-out`);
     console.log(options.helpText);
     process.exit(0);
 }

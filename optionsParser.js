@@ -43,6 +43,12 @@ const opts = [
         type: "string",
         help: "CSV delimiter [,]. Must be one character in length only.",
         default: ","
+    },
+    {
+        names: ["tabdelim", "t"],
+        type: "bool",
+        help: "Override delimiter to use tabs (avoids negotiating CLI parsing).",
+        default: false
     }
 ];
 
@@ -79,7 +85,11 @@ module.exports = function parseOptions(argv) {
         excludes: options.exclude || [],
         headersIn: headersIn,
         headersOut: headersOut,
-        delimiter: options.delimiter || ",",
+        delimiter: (
+            options.tabdelim
+                ? "\t"
+                : options.delimiter || ","
+        ),
         help: options.help,
         get  helpText() { return parser.help(); },
         version: options.version

@@ -2,6 +2,8 @@
   "name": "@idac/csvtools",
   "version": "0.1.1",
   "description": "Tools for working with and analysing CSV files.",
+  "keywords": ["csv", "tsv", "dsv", "cli"],
+  "preferGlobal": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/robations/csvtools.git"
@@ -21,6 +23,9 @@
     "immutable": "^3.7.6",
     "lodash": "^4.6.1",
     "rx": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=4"
   },
   "bin": {
     "csvproject": "project.js",

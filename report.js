@@ -109,6 +109,7 @@ function _if(expr, t, f) {
 const csv$ = createCsvObservable(stream, {headers: options.headersIn, delimiter: options.delimiter});
 csv$
     .map(columnSelector)
+    .filter(row => Object.keys(row).length > 0)
     .reduce(
         (agg, row) => {
             return _.mapValues(row, (v, k) => colReport(agg[k], row[k]));

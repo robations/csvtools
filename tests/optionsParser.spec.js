@@ -43,4 +43,12 @@ describe("optionsParser", function () {
         expect(result.headersIn).toEqual(false);
         expect(result.headersOut).toEqual(true);
     });
+
+    it("should use tabs if tabdelim option is used", function () {
+        const result = p(["node", "script.js", "-nhd.", "-t"]);
+        const result2 = p(["node", "script.js", "-nhd.", "--tabdelim"]);
+
+        expect(result.delimiter).toEqual("\t");
+        expect(result2.delimiter).toEqual("\t");
+    });
 });
