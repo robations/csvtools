@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.3]
+### Added
+- `yarn.lock` file added
+
+### Fixed
+- `cli-table3` replaces `cli-table2` fixing security warning (thanks to [DanielRuf](https://github.com/DanielRuf) for PR)
+
+
 ## [0.1.2]
 ### Added
 - `preversion` hook to check for 'Unreleased' in this changelog.
