@@ -5,7 +5,7 @@ const csv = require("fast-csv");
 const fs = require("fs");
 const _ = require("lodash");
 const rx = require("rx");
-const Table = require("cli-table2");
+const Table = require("cli-table3");
 const colors = require("colors/safe");
 const immutable = require("immutable");
 
