@@ -24,7 +24,7 @@
     "cli-table3": "^0.5.0",
     "colors": "^1.1.2",
     "dashdash": "^1.14.0",
-    "fast-csv": "^1.1.0",
+    "fast-csv": "^4.3.6",
     "immutable": "^3.7.6",
     "lodash": "^4.6.1",
     "rx": "^4.1.0"
