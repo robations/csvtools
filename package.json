@@ -23,14 +23,14 @@
   "dependencies": {
     "@fast-csv/format": "^4.3.5",
     "@fast-csv/parse": "^4.3.6",
-    "cli-table3": "^0.5.0",
+    "cli-table3": "^0.6.0",
     "colors": "^1.1.2",
     "dashdash": "^1.14.0",
     "lodash": "^4.6.1",
     "rxjs": "^7"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=10"
   },
   "bin": {
     "csvproject": "src/project.js",
