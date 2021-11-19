@@ -1,6 +1,6 @@
 {
   "name": "@idac/csvtools",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Tools for working with and analysing CSV files.",
   "keywords": [
     "csv",
