@@ -1,22 +1,19 @@
 #!/usr/bin/env node
 "use strict";
 
-const csv = require("fast-csv");
-const fs = require("fs");
-const _ = require("lodash");
-const rx = require("rx");
+const {trim, mapValues, sampleSize, forEach: _forEach} = require("lodash");
 const Table = require("cli-table3");
 const colors = require("colors/safe");
-const immutable = require("immutable");
 
 const createCsvObservable = require("./createCsvObservable");
 const optionsParser = require("./optionsParser");
 const columnSelectors = require("./columnSelectors");
+const {map, filter, reduce} = require("rxjs");
 
 const options = optionsParser(process.argv);
 
 if (options.version) {
-    console.log(require("./package.json").version);
+    console.log(require("../package.json").version);
     process.exit(0);
 }
 if (options.help) {
@@ -30,7 +27,7 @@ const columnSelector = options.cols.length > 0
     : columnSelectors.exclude(options.excludes)
 ;
 
-var stream = options.inputStream;
+const stream = options.inputStream;
 
 function stringColReport(agg, col) {
     if (agg === null) {
@@ -40,7 +37,7 @@ function stringColReport(agg, col) {
             maxLength: 0,
             minLength: Number.POSITIVE_INFINITY,
             count: 0,
-            uniques: immutable.Set(),
+            uniques: new Set(),
             emptyCount: 0
         };
     }
@@ -51,7 +48,7 @@ function stringColReport(agg, col) {
         minLength: Math.min(agg.minLength, col.length),
         count: agg.count + 1,
         uniques: agg.uniques.add(col),
-        emptyCount: agg.emptyCount + (_.trim(col) === "" ? 1 : 0)
+        emptyCount: agg.emptyCount + (trim(col) === "" ? 1 : 0)
     };
 }
 function numericColReport(agg, col) {
@@ -62,7 +59,7 @@ function numericColReport(agg, col) {
             sum: 0,
             count: 0,
             mean: null,
-            uniques: immutable.Set()
+            uniques: new Set(),
         };
     }
     const val = parseFloat(col);
@@ -107,18 +104,18 @@ function _if(expr, t, f) {
 }
 
 const csv$ = createCsvObservable(stream, {headers: options.headersIn, delimiter: options.delimiter});
-csv$
-    .map(columnSelector)
-    .filter(row => Object.keys(row).length > 0)
-    .reduce(
+csv$.pipe(
+    map(columnSelector),
+    filter(row => Object.keys(row).length > 0),
+    reduce(
         (agg, row) => {
-            return _.mapValues(row, (v, k) => colReport(agg[k], row[k]));
+            return mapValues(row, (v, k) => colReport(agg[k], row[k]));
         },
         {}
-    )
-    .map((x) => {
-        return _.mapValues(x, v => {
-            var table = new Table({
+    ),
+    map((x) => {
+        return mapValues(x, v => {
+            const table = new Table({
                 colWidths: [null, 60],
                 wordWrap: true
             });
@@ -149,7 +146,7 @@ csv$
                     table.push([colors.green("maxLength"), s.maxLength]);
                     table.push([
                         colors.green("Unique strings") + ` (${s.uniques.size})`,
-                        _.sampleSize(s.uniques.toArray(), 25).join(", ")
+                        sampleSize(Array.from(s.uniques.values()), 25).join(", ")
                     ]);
                 }
                 table.push([colors.green("emptyCount"), s.emptyCount]);
@@ -162,22 +159,22 @@ csv$
                 table.push([colors.green("mean"), t.mean]);
                 table.push([
                     colors.green("Unique numbers") + ` (${t.uniques.size})`,
-                    _.sampleSize(t.uniques.toArray(), 25).join(", ")
+                    sampleSize(Array.from(t.uniques.values()), 25).join(", ")
                 ]);
             }
 
             return table;
         });
-    })
-    .forEach((tables) => {
-        _.forEach(
-            tables,
-            (table, k) => {
+    }),
+)
+    .subscribe({
+        next: (tables) => {
+            _forEach(tables, (table, k) => {
                 console.log("Column:", colors.white.bold(k));
                 console.log(table.toString());
                 console.log("");
-            }
-        );
+            });
+        },
     })
 ;
 

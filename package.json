@@ -13,33 +13,35 @@
     "type": "git",
     "url": "https://github.com/robations/csvtools.git"
   },
-  "main": "project.js",
+  "main": "src/project.js",
   "scripts": {
-    "test": "node test.js",
-    "preversion": "! grep -q '\\[Unreleased\\]' CHANGELOG.md"
+    "test": "jest",
+    "preversion": "grep \"\\[$npm_new_version\\]\" CHANGELOG.md > /dev/null || ( echo \"You need to add an entry in CHANGELOG.md for this version. ($npm_new_version)\" && false ) && yarn test"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fast-csv/format": "^4.3.5",
+    "@fast-csv/parse": "^4.3.6",
     "cli-table3": "^0.5.0",
     "colors": "^1.1.2",
     "dashdash": "^1.14.0",
-    "fast-csv": "^1.1.0",
-    "immutable": "^3.7.6",
     "lodash": "^4.6.1",
-    "rx": "^4.1.0"
+    "rxjs": "^7"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   },
   "bin": {
-    "csvproject": "project.js",
-    "csvreport": "report.js"
+    "csvproject": "src/project.js",
+    "csvreport": "src/report.js"
   },
   "files": [
-    "*.js"
+    "src/*.js",
+    "!src/*.spec.js",
+    "!src/*.test.js"
   ],
   "devDependencies": {
-    "jasmine": "^2.4.1"
+    "jest": "^27.3.1"
   }
 }

@@ -29,13 +29,13 @@ const opts = [
     {
         names: ["col", "c"],
         type: "arrayOfString",
-        help: "Select a column by name (if using a header row) or number. Cannot be used with --exclude.",
+        help: "Select a column by name (if using a header row) or 0-indexed number. Cannot be used with --exclude.",
         default: []
     },
     {
         names: ["exclude", "e"],
         type: "arrayOfString",
-        help: "Exclude a column by name (if using a header row) or number. Cannot be used with --col.",
+        help: "Exclude a column by name (if using a header row) or 0-indexed number. Cannot be used with --col.",
         default: []
     },
     {
@@ -60,7 +60,7 @@ const parser = dashdash.createParser({options: opts});
  * @returns {{inputFile: null, inputStream: (process.stdin|{}), cols: (*|Array), delimiter: (*|string), excludes: (*|Array), headersIn: boolean, headersOut: boolean}}
  */
 module.exports = function parseOptions(argv) {
-    var options = parser.parse(argv);
+    const options = parser.parse(argv);
 
     if (options.col.length > 0 && options.exclude.length > 0) {
         throw new Error("Options --col and --exclude cannot be used together");

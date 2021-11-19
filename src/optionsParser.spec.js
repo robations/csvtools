@@ -1,4 +1,4 @@
-const p = require("../optionsParser");
+const p = require("./optionsParser");
 
 describe("optionsParser", function () {
     it("should return suitable defaults for missing values", function () {

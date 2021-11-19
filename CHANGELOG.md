@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.4]
+### Fixed
+- Out of date packages updated where possible
+- Projecting columns by number doesn't respect ordering
+
+
 ## [0.1.3]
 ### Added
 - `yarn.lock` file added
@@ -36,4 +42,3 @@ option parsing.
 
 ### Changed
 - Option `-cols` changed to `-col`.
-
